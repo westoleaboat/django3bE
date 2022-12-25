@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, Comment
 # pagination
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # class-based views
 from django.views.generic import ListView
 # handling forms in views
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 
 # Create your views here.
 
@@ -61,5 +61,24 @@ def post_detail(request, year, month, day, post):
     """ This view takes the year, month,day and post arguments to retrieve a published post with the given slug and date. """
     post = get_object_or_404(Post, slug=post,
                              status='published', publish__year=year, publish__month=month, publish__day=day)
+    
+    # List of active comments for this post
+    comments = post.comments.filter(active=True)
+    new_comment = None
 
-    return render(request, 'blog/post/detail.html', {'post': post})
+    if request.method == 'POST':
+        # A comment was posted
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create comment object but dont save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assing the current post to the comment
+            new_comment.post = post
+            # save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+
+    return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments,
+    'new_comment': new_comment,
+    'comment_form': comment_form})

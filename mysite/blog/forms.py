@@ -1,4 +1,5 @@
 from django import forms
+from .models import Comment
 
 
 class EmailPostForm(forms.Form):
@@ -14,3 +15,8 @@ class EmailPostForm(forms.Form):
     # widget attribute overrides default widget type
     # required is optional
     comments = forms.CharField(required=False, widget=forms.Textarea)
+
+class CommentForm(forms.ModelForm): #page52
+    class Meta:
+        model = Comment
+        fields = ('name', 'email', 'body')
