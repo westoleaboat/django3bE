@@ -61,7 +61,7 @@ def post_detail(request, year, month, day, post):
     """ This view takes the year, month,day and post arguments to retrieve a published post with the given slug and date. """
     post = get_object_or_404(Post, slug=post,
                              status='published', publish__year=year, publish__month=month, publish__day=day)
-    
+
     # List of active comments for this post
     comments = post.comments.filter(active=True)
     new_comment = None
@@ -80,5 +80,5 @@ def post_detail(request, year, month, day, post):
         comment_form = CommentForm()
 
     return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments,
-    'new_comment': new_comment,
-    'comment_form': comment_form})
+                                                     'new_comment': new_comment,
+                                                     'comment_form': comment_form})
