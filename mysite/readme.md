@@ -18,3 +18,4 @@ Then, type the following lines:
 >>> post.save()
 
 -creating a comment system page50
+![Screenshot_select-area_20221226145817](https://user-images.githubusercontent.com/68698872/209551506-2448def4-3176-4f8d-be5b-4e0453c9a04d.png)
