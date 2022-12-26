@@ -6,6 +6,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 # handling forms in views
 from .forms import EmailPostForm, CommentForm
+# tagging
+from taggit.models import Tag
+
 
 # Create your views here.
 
@@ -34,8 +37,13 @@ def post_share(request, post_id):  # 42d3be
                                                         'form': form})
 
 
-def post_list(request):  # PAGINA26-27/34 django3byexample
+def post_list(request, tag_slug=None):  # PAGINA26-27/34 django3byexample
     object_list = Post.published.all()
+    # tagging
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
     # instantiate the Paginator class with the number of objects that you want to display on each page.
     paginator = Paginator(object_list, 3)  # 3 post in each page
     # you get the page GET parameter, indicates the current page #
@@ -54,14 +62,15 @@ def post_list(request):  # PAGINA26-27/34 django3byexample
     return render(request,
                   'blog/post/list.html',
                   {'page': page,
-                   'posts': posts})
+                   'posts': posts,
+                   'tag': tag})
 
 
 def post_detail(request, year, month, day, post):
     """ This view takes the year, month,day and post arguments to retrieve a published post with the given slug and date. """
     post = get_object_or_404(Post, slug=post,
                              status='published', publish__year=year, publish__month=month, publish__day=day)
-    
+
     # List of active comments for this post
     comments = post.comments.filter(active=True)
     new_comment = None
@@ -80,5 +89,5 @@ def post_detail(request, year, month, day, post):
         comment_form = CommentForm()
 
     return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments,
-    'new_comment': new_comment,
-    'comment_form': comment_form})
+                                                     'new_comment': new_comment,
+                                                     'comment_form': comment_form})

@@ -1,3 +1,5 @@
+https://github.com/PacktPublishing/Django-3-by-Example
+
 creating and applying migrations PAGE14 django3byexample
 If you edit the models.py file in order to add, remove, or change the fields of existing 
 models, or if you add new models, you will have to create a new migration using the 
